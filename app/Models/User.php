@@ -28,6 +28,10 @@ class User extends Authenticatable
         'email',
         'password',
     ];
+    public function comments()
+{
+    return $this->hasMany(Comment::class);
+}
 
     /**
      * The attributes that should be hidden for serialization.
@@ -58,4 +62,13 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
+    public function shares()
+{
+    return $this->hasMany(Share::class);
+}
 }
