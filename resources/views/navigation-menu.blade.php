@@ -1,3 +1,4 @@
+
 <nav x-data="{ open: false }" class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -34,28 +35,28 @@
     </div>
 </button>
 
-        <div x-show="open" @click.away="open = false" class="origin-top-right absolute right-0 mt-2 rounded-md shadow-lg"style="width: 300px;">
-            <div class="rounded-md bg-white shadow-xs">
-                <div class="py-1">
-                @forelse (auth()->user()->unreadNotifications as $notification)
-        <div class="flex justify-between items-center border-b border-gray-200 py-2">
-            <a href="/tasks/{{ $notification->data['task_id'] }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150">
-                {{ $notification->data['message'] }}
-            </a>
-            <form method="POST" action="/notifications/{{ $notification->id }}" >
-                @csrf
-                @method('PATCH')
-                <button type="submit" class="text-blue-600 hover:text-blue-800">Mark as read</button>
-            </form>
-        </div>
-    @empty
-        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150">
-            No new notifications.
-        </a>
-    @endforelse
-                </div>
+<div x-show="open" @click.away="open = false" class="origin-top-right absolute right-0 mt-2 w-80 rounded-md shadow-lg">
+    <div class="rounded-md bg-white shadow-xs">
+        <div class="py-1">
+        @forelse (auth()->user()->unreadNotifications as $notification)
+            <div class="flex justify-between items-center border-b border-gray-200 py-2 px-4 hover:bg-gray-100 transition ease-in-out duration-150">
+                <a href="/tasks/{{ $notification->data['task_id'] }}" class="text-sm text-gray-700">
+                    {{ $notification->data['message'] }}
+                </a>
+                <form method="POST" action="/notifications/{{ $notification->id }}" >
+                    @csrf
+                    @method('PATCH')
+                    <button type="submit" class="text-blue-600 hover:text-blue-800 px-2 py-1 rounded bg-blue-100 hover:bg-blue-200">Mark as read</button>
+                </form>
             </div>
+        @empty
+            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150">
+                No new notifications.
+            </a>
+        @endforelse
         </div>
+    </div>
+</div>
     </div>
     </div>
 </div>

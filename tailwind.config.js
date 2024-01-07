@@ -19,5 +19,11 @@ export default {
         },
     },
 
+    variants: {
+        extend: {
+            visibility: ['group-hover'],
+        },
+    },
+
     plugins: [forms, typography],
 };

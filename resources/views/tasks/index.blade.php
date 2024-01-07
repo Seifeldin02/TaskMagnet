@@ -26,9 +26,11 @@
                         <tbody>
                         @foreach($tasks as $task)
                             <tr>
-                                <td class="border px-4 py-2 text-white">
-                                    <a href="{{ route('tasks.show', $task) }}" class="text-blue-500 hover:text-blue-700">{{ $task->name }}</a>
-                                    @if($task->user)
+                            <tr class="hover:bg-gray-600 transition ease-in-out duration-150">
+    <td class="border px-4 py-2 text-white hover:text-gray-900 relative group">
+        
+        <a href="{{ route('tasks.show', $task) }}" class="text-blue-500 hover:text-blue-700">{{ $task->name }}</a>
+                             @if($task->user)
                                         <img class="inline-block h-6 w-6 rounded-full ml-2" src="{{ $task->user->profile_photo_url }}" alt="{{ $task->user->name }}'s profile photo">
                                     @endif
                                     @foreach($task->shares as $share)
@@ -48,8 +50,7 @@
 
                     <td class="border px-4 py-2 text-white relative">
     <div class="w-full h-6 bg-red-200">
-        <div class="h-full" style="width:{{ (10 - $task->priority) * 10 }}%; background-color: red;"></div>
-    </div>
+    <div class="h-full" style="width:{{ $task->priority >= 11 ? 0 : (10 - $task->priority) * 10 }}%; background-color: red;"></div>    </div>
 </td>                                <td class="border px-4 py-2 text-white">
                                     <form action="{{ route('tasks.destroy', $task) }}" method="POST" class="inline-block">
                                         @csrf
@@ -76,8 +77,7 @@
                 @endif
 
                 <div class="mt-4">
-                    <a href="{{ route('tasks.create') }}" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Create Task</a>
-                </div>
+                <a href="{{ route('tasks.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-4">Create Task</a>                </div>
 
             </div>
         </div>
