@@ -18,6 +18,8 @@
                 </div>
             </div>
 
+
+
             <div x-data="{ open: false }" class="relative inline-block text-left">
   
             <div class="flex items-center space-x-100 mt-5 ">
@@ -25,28 +27,32 @@
     <button @click="open = !open" class="flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out">
     <img src="/img/Noti.png" alt="Notifications" class="h-5 w-5 align-middle ">
     <div class="ml-5 align-middle">
+    <span class="badge badge-danger">{{ auth()->user()->unreadNotifications->count() }}</span>
         <svg class="fill-current h-4 w-4 align-middle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
         </svg>
     </div>
 </button>
 
-        <div x-show="open" @click.away="open = false" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg">
+        <div x-show="open" @click.away="open = false" class="origin-top-right absolute right-0 mt-2 rounded-md shadow-lg"style="width: 300px;">
             <div class="rounded-md bg-white shadow-xs">
                 <div class="py-1">
-                    @forelse (auth()->user()->unreadNotifications as $notification)
-                    <a href="/tasks/{{ $notification->data['task_id'] }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150">                            {{ $notification->data['message'] }}
-                            <form method="POST" action="/notifications/{{ $notification->id }}">
-                                @csrf
-                                @method('PATCH')
-                                <button type="submit" class="text-blue-600 hover:text-blue-800">Mark as read</button>
-                            </form>
-                        </a>
-                    @empty
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150">
-                            No new notifications.
-                        </a>
-                    @endforelse
+                @forelse (auth()->user()->unreadNotifications as $notification)
+        <div class="flex justify-between items-center border-b border-gray-200 py-2">
+            <a href="/tasks/{{ $notification->data['task_id'] }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150">
+                {{ $notification->data['message'] }}
+            </a>
+            <form method="POST" action="/notifications/{{ $notification->id }}" >
+                @csrf
+                @method('PATCH')
+                <button type="submit" class="text-blue-600 hover:text-blue-800">Mark as read</button>
+            </form>
+        </div>
+    @empty
+        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150">
+            No new notifications.
+        </a>
+    @endforelse
                 </div>
             </div>
         </div>

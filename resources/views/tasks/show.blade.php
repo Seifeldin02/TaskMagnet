@@ -2,6 +2,7 @@
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Task Details') }}
+            
         </h2>
     </x-slot>
 
@@ -34,18 +35,23 @@
 <div class="mt-4">
                         <a href="{{ route('tasks.edit', $task->id) }}" class="inline-flex items-center px-4 py-2 bg-white border border-black rounded-md font-semibold text-xs text-black uppercase tracking-widest hover:bg-gray-200 active:bg-gray-300 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150 z-10">Edit Task</a>
                     </div>
-<form method="POST" action="{{ route('tasks.destroy', $task->id) }}" class="inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring ring-red-300 disabled:opacity-25 transition ease-in-out duration-150">Delete Task</button>
-                        </form>
+                    @if(auth()->id() === $task->user_id)
+    <form method="POST" action="{{ route('tasks.destroy', $task) }}">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring ring-red-300 disabled:opacity-25 transition ease-in-out duration-150">
+            Delete Task
+        </button>
+    </form>
+@endif
                         <br>
                         <br>
                         <br>
 <h3><strong>Active Users: </strong></h3>
 <ul>
 @foreach($users as $user)
-    <li>
+    <li class="flex items-center">
+        <img class="inline-block h-6 w-6 rounded-full mr-2" src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}'s profile photo">
         {{ $user->name }}
         @if($task->user_id == auth()->id() && $user->id != $task->user_id)
             <form method="POST" action="{{ route('tasks.removeShare', [$task, $user]) }}" class="inline">
@@ -81,19 +87,23 @@
 
 <h3>Comments:</h3>
 @foreach($comments as $comment)
-    <div class="p-4 mt-4 bg-gray-100 rounded shadow">
-        <p>
-            <strong>{{ $comment->user->name }}</strong>: <br>
-            {{ $comment->comment }}
-            <br>
-            @if($comment->image)
-            <img src="{{ asset('storage/'.$comment->image) }}" alt="">
-                        @endif
-            <small>Commented at: {{ $comment->created_at }}</small><br>
-            @if($comment->updated_at != $comment->created_at)
-                <small>Edited at: {{ $comment->updated_at }}</small>
-            @endif
-        </p>
+<div class="p-4 mt-4 bg-gray-100 rounded shadow">
+        <div class="flex items-center"> <!-- Add this line -->
+            <p>
+            <img class="inline-block h-12 w-12 rounded-full mr-2" src="{{ $comment->user->profile_photo_url }}" alt="{{ $comment->user->name }}'s profile photo"> <!-- Add this line -->
+
+                <strong>{{ $comment->user->name }}</strong>: <br>
+                {{ $comment->comment }}
+                <br>
+                @if($comment->image)
+                    <img src="{{ asset($comment->image) }}" alt="Image">
+                @endif
+                <small>Commented at: {{ $comment->created_at }}</small><br>
+                @if($comment->updated_at != $comment->created_at)
+                    <small>Edited at: {{ $comment->updated_at }}</small>
+                @endif
+            </p>
+        </div> <!-- Add this line -->
         @if(auth()->id() === $comment->user_id)
             <a href="{{ route('comments.edit', $comment->id) }}" class="inline-flex items-center px-4 py-2 bg-white border border-black rounded-md font-semibold text-xs text-black uppercase tracking-widest hover:bg-gray-200 active:bg-gray-300 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150 z-10">Edit</a>
             <form action="{{ route('comments.destroy', $comment->id) }}" method="POST" class="inline">
@@ -115,4 +125,9 @@
             </div>
         </div>
     </div>
+    @if (session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
 </x-app-layout>

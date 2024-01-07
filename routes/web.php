@@ -41,6 +41,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/shares/{share}', [ShareController::class, 'destroy'])->name('shares.destroy');
     Route::patch('/tasks/{task}/completion', [TaskController::class, 'updateCompletion'])->name('tasks.updateCompletion');
     Route::delete('/tasks/{task}/shares/{user}', [TaskController::class, 'removeShare'])->name('tasks.removeShare');
+    Route::get('/notifications/unreadCount', 'NotificationController@unreadCount')->name('notifications.unreadCount');
 
 });
 

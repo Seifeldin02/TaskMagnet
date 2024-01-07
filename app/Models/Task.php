@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage; 
 class Task extends Model
 {
     use HasFactory;
@@ -16,9 +18,7 @@ class Task extends Model
         'priority',
         'completion_rate',
     ];
-    protected $casts = [
-        'comments' => 'array',
-    ];
+
     public function shares()
     {
         return $this->hasMany(Share::class);
@@ -27,9 +27,33 @@ class Task extends Model
 {
     return $this->hasMany(Comment::class);
 }
+public function sharedUser()
+{
+    return $this->hasOneThrough(User::class, Share::class);
+}
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($task) {
+            // Delete all comments and their related images
+            if ($task->comments) {
+                foreach ($task->comments as $comment) {
+                    // Delete the comment's image
+                    if ($comment->image) {
+                        Storage::delete($comment->image);
+                    }
+            
+                    // Delete the comment
+                    $comment->delete();
+                }
+            }
+        });
     }
     public function dueDateRemaining()
     {

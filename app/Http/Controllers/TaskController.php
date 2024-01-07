@@ -15,6 +15,9 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\ShareTask;
 use App\Models\User;
 use App\Models\Share;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class TaskController extends Controller
 {
@@ -159,7 +162,7 @@ public function share(Request $request, Task $task)
             'due_date' => $request->input('due_date'),
         ]);
 
-        return redirect()->back()->with('success', 'Task updated successfully');
+        return redirect()->route('tasks.show', ['task' => $task->id])->with('success', 'Task updated successfully');
     }
     public function edit($id)
 {
@@ -181,7 +184,14 @@ public function share(Request $request, Task $task)
 
     public function destroy(Task $task)
     {
+        foreach ($task->comments as $comment) {
+            if ($comment->image) {
+                File::delete(public_path($comment->image));
+            }
+        }
+    
         $task->delete();
+
         Task::where('user_id', $task->user_id)
             ->where('priority', '>', $task->priority)
             ->decrement('priority');

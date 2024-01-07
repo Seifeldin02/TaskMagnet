@@ -10,13 +10,30 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
                     <!-- Edit comment form -->
-                    <form method="POST" action="{{ route('comments.update', $comment->id) }}">
+                    <form method="POST" action="{{ route('comments.update', $comment->id) }}" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 
                         <div class="mb-4">
                             <label for="comment" class="block text-gray-700 text-sm font-bold mb-2">Edit Comment</label>
                             <textarea id="comment" name="comment" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">{{ $comment->comment }}</textarea>
+                        </div>
+
+                        <!-- Image preview -->
+                        @if($comment->image)
+                            <div class="mb-4">
+                                <img src="{{ asset($comment->image) }}" alt="Image">
+                                <div>
+                                    <label for="remove_image" class="block text-gray-700 text-sm font-bold mb-2">Remove Image</label>
+                                    <input type="checkbox" id="remove_image" name="remove_image">
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Image upload -->
+                        <div class="mb-4">
+                            <label for="image" class="block text-gray-700 text-sm font-bold mb-2">Upload Image</label>
+                            <input type="file" id="image" name="image">
                         </div>
 
                         <!-- Check if the comment was made by the currently authenticated user -->
