@@ -10,11 +10,11 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
-                    <h2>Task Name: {{ $task->name }}</h2>
-                    <p>Task Description: {{ $task->description }}</p>
-                    <p>Due Date: {{ $task->due_date }}</p>
-                    <p>Due Date Remaining: {{ $task->dueDateRemaining() }}</p>
-                    <p>Completion Rate: <span style="color:black;">{{ $task->completion_rate }}/100</span></p>                    <div class="relative pt-1">
+                    <h2><strong>Task Name:</strong> {{ $task->name }}</h2>
+                    <p><strong>Task Description:</strong> {{ $task->description }}</p>
+                    <p><strong>Due Date:</strong> {{ $task->due_date }}</p>
+                    <p><strong>Due Date Remaining:</strong> {{ $task->dueDateRemaining() }}</p>
+                    <p><strong>Completion Rate:</strong> <span style="color:black;">{{ $task->completion_rate }}/100</span></p>                    <div class="relative pt-1">
                         <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-red-200">
                             <div style="width:{{ $task->completion_rate }}%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-red-500"></div>
                         </div>

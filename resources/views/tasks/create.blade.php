@@ -32,14 +32,11 @@
                         <input type="datetime-local" name="due_date" id="due_date" required>
                     </div>
 
-                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-        <div class="container">
- <a  class="btn" style="color: white; background-color: red; border: none; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer;">Create Task</a>
-</div>
+                    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                        Create Task
                     </button>
-                </form> <!-- Add this closing tag for the form -->
+                </form>
                 <Livewire:Tasks.Create />
-
             </div>
         </div>
     </div>
