@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ShareController;
+use App\Http\Controllers\SubtaskController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,7 +43,13 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/tasks/{task}/completion', [TaskController::class, 'updateCompletion'])->name('tasks.updateCompletion');
     Route::delete('/tasks/{task}/shares/{user}', [TaskController::class, 'removeShare'])->name('tasks.removeShare');
     Route::get('/notifications/unreadCount', 'NotificationController@unreadCount')->name('notifications.unreadCount');
-
+    Route::post('/tasks/toggleAutoSort', [TaskController::class, 'toggleAutoSort'])->name('tasks.toggleAutoSort');
+    Route::post('/tasks/{task}/subtasks', [SubtaskController::class, 'store'])->name('subtasks.store');
+    Route::get('/subtasks/{subtask}/edit', [SubtaskController::class, 'edit'])->name('subtasks.edit');
+    Route::patch('/subtasks/{subtask}', [SubtaskController::class, 'update'])->name('subtasks.update');
+    Route::delete('/subtasks/{subtask}', [SubtaskController::class, 'destroy'])->name('subtasks.destroy');
+    Route::patch('/subtasks/{subtask}/completion', [SubtaskController::class, 'updateCompletion'])->name('subtasks.updateCompletion');
+    
 });
 
 

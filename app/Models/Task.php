@@ -18,7 +18,10 @@ class Task extends Model
         'priority',
         'completion_rate',
     ];
-
+    public function subtasks()
+    {
+        return $this->hasMany(Subtask::class);
+    }
     public function shares()
     {
         return $this->hasMany(Share::class);
@@ -76,5 +79,26 @@ public function sharedUser()
             $diff = $dueDate->diff($now);
             return 'Due date has passed by ' . $diff->format('%y years, %m months, %d days, %h hours, %i minutes, %s seconds');
         }
+    
+        $daysUntilDue = $now->diffInDays($dueDate, false);
+    
+        return [
+            'dayss' => $daysUntilDue,
+            'isPastDue' => $dueDate->isPast(),
+        ];
     }
+
+    public function dueDateDetails()
+{
+    $now = Carbon::now();
+    $dueDate = Carbon::parse($this->due_date);
+
+    $daysUntilDue = $now->diffInDays($dueDate, false);
+    $isPastDue = $dueDate->isPast();
+
+    return [
+        'days' => $daysUntilDue,
+        'isPastDue' => $isPastDue,
+    ];
+}
 }

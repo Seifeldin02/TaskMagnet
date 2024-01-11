@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
+
 class TaskController extends Controller
 {
 
@@ -181,7 +182,12 @@ public function share(Request $request, Task $task)
         return response()->json(['remainingTime' => $remainingTime]);
     }
 
-
+    public function toggleAutoSort(Request $request)
+    {
+        $request->session()->put('autoSort', !$request->session()->get('autoSort', false));
+    
+        return redirect()->back();
+    }
     public function destroy(Task $task)
     {
         foreach ($task->comments as $comment) {
@@ -199,18 +205,28 @@ public function share(Request $request, Task $task)
   
         return redirect()->route('tasks.index');
     }
-    public function index()
+    public function index(Request $request)
     {
         $userId = auth()->id();
     
         // Get the tasks that the user has created
-        $userTasks = Task::where('user_id', $userId)->orderBy('priority', 'asc')->get();
+        $userTasks = Task::where('user_id', $userId);
     
         // Get the tasks that have been shared with the user
         $sharedTasks = Task::join('shares', 'tasks.id', '=', 'shares.task_id')
             ->where('shares.user_id', $userId)
-            ->select('tasks.*', 'shares.user_id as shared_user_id')
-            ->get();
+            ->select('tasks.*', 'shares.user_id as shared_user_id');
+    
+        // If autoSort is enabled, order tasks by due_date
+        if ($request->session()->get('autoSort', false)) {
+            $userTasks = $userTasks->orderBy('due_date', 'asc');
+            $sharedTasks = $sharedTasks->orderBy('due_date', 'asc');
+        } else {
+            $userTasks = $userTasks->orderBy('priority', 'asc');
+        }
+    
+        $userTasks = $userTasks->get();
+        $sharedTasks = $sharedTasks->get();
     
         // Merge the two collections into one
         $tasks = $userTasks->concat($sharedTasks);

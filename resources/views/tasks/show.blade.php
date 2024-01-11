@@ -18,33 +18,113 @@
                         <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-red-200">
                             <div style="width:{{ $task->completion_rate }}%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-red-500"></div>
                         </div>
-                    </div>
-                    <form method="POST" action="{{ route('tasks.updateCompletion', $task->id) }}">
-    @csrf
-    @method('PATCH')
-    <input type="hidden" name="change" value="10">
-    <button type="submit"><div class="mt-2 inline-flex items-center px-4 py-2 bg-white border border-black rounded-md font-semibold text-xs text-black uppercase tracking-widest hover:bg-gray-200 active:bg-gray-300 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150 z-10">+</button>
-</form>
-<form method="POST" action="{{ route('tasks.updateCompletion', $task->id) }}">
-    @csrf
-    @method('PATCH')
-    <input type="hidden" name="change" value="-10">
-    <button type="submit"><div class="mt-2 inline-flex items-center px-4 py-2 bg-white border border-black rounded-md font-semibold text-xs text-black uppercase tracking-widest hover:bg-gray-200 active:bg-gray-300 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150 z-10">-</button>
-</form>
-<br>
-<div class="mt-4">
-                        <a href="{{ route('tasks.edit', $task->id) }}" class="inline-flex items-center px-4 py-2 bg-white border border-black rounded-md font-semibold text-xs text-black uppercase tracking-widest hover:bg-gray-200 active:bg-gray-300 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150 z-10">Edit Task</a>
-                    </div>
-                    @if(auth()->id() === $task->user_id)
-    <form method="POST" action="{{ route('tasks.destroy', $task) }}">
-        @csrf
-        @method('DELETE')
-        <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring ring-red-300 disabled:opacity-25 transition ease-in-out duration-150">
-            Delete Task
-        </button>
-    </form>
-@endif
+                        <div class="flex space-x-4 mb-4">
+        <form method="POST" action="{{ route('tasks.updateCompletion', $task->id) }}">
+            @csrf
+            @method('PATCH')
+            <input type="hidden" name="change" value="10">
+            <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">+</button>
+        </form>
+        <form method="POST" action="{{ route('tasks.updateCompletion', $task->id) }}">
+            @csrf
+            @method('PATCH')
+            <input type="hidden" name="change" value="-10">
+            <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">-</button>
+        </form>
+        <!-- Edit Button -->
+        <a href="{{ route('tasks.edit', $task->id) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Edit
+        </a>
+        <!-- Delete Button -->
+        @if(Auth::id() == $task->user_id)
+            <form method="POST" action="{{ route('tasks.destroy', $task->id) }}">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Delete</button>
+            </form>
+        @endif
+    </div>
+</div>
                         <br>
+<!-- Create Subtask Button -->
+<div x-data="{ showForm: false }">
+    <button @click="showForm = !showForm" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Create Subtask
+    </button>
+    <div x-show="showForm" class="mt-4">
+        <form method="POST" action="{{ route('subtasks.store', $task->id) }}" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            @csrf
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
+                    Subtask Name
+                </label>
+                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="name" type="text" name="name" placeholder="Subtask name" required>
+            </div>
+            <div class="mb-6">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="description">
+                    Subtask Description
+                </label>
+                <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="description" name="description" placeholder="Subtask description"></textarea>
+            </div>
+            <div class="flex items-center justify-between">
+                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+                    Add Subtask
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Subtasks List -->
+@if(count($task->subtasks) > 0)
+    <h3 class="mt-4 font-semibold text-xl text-gray-800 leading-tight">Subtasks:</h3>
+    @foreach($task->subtasks as $subtask)
+        <div x-data="{ showEditForm: false, editForm: { name: '{{ $subtask->name }}', description: '{{ $subtask->description }}', completion_rate: {{ $subtask->completion_rate }} } }" class="{{ $subtask->completion_rate == 100 ? 'line-through' : '' }}">
+            <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 hover:bg-blue-100 transition-colors duration-200">
+                <strong class="text-xl">{{ $subtask->name }}</strong>: {{ $subtask->description }}
+                <div class="relative pt-1">
+                    <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-red-200">
+                        <div style="width:{{ $subtask->completion_rate }}%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-red-500"></div>
+                    </div>
+                </div>
+                <!-- Completion Rate Buttons -->
+                <div class="flex space-x-4 mb-4">
+                    <form method="POST" action="{{ route('subtasks.updateCompletion', $subtask->id) }}">
+                        @csrf
+                        @method('PATCH')
+                        <input type="hidden" name="change" value="10">
+                        <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">+</button>
+                    </form>
+                    <form method="POST" action="{{ route('subtasks.updateCompletion', $subtask->id) }}">
+                        @csrf
+                        @method('PATCH')
+                        <input type="hidden" name="change" value="-10">
+                        <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">-</button>
+                    </form>
+                    <!-- Edit Button -->
+                    <button @click="showEditForm = !showEditForm" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Edit
+                    </button>
+                    <form method="POST" action="{{ route('subtasks.destroy', $subtask) }}">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Delete</button>
+                    </form>
+                </div>
+                <!-- Edit Subtask Form -->
+                <div x-show="showEditForm" class="mt-4">
+                    <form method="POST" action="{{ route('subtasks.update', $subtask->id) }}">
+                        @csrf
+                        @method('PATCH')
+                        <input type="text" name="name" x-model="editForm.name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        <input type="text" name="description" x-model="editForm.description" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endforeach
+@endif
                         <br>
                         <br>
 <h3><strong>Active Users: </strong></h3>

@@ -25,5 +25,17 @@ export default {
         },
     },
 
-    plugins: [forms, typography],
+    plugins: [
+        forms, 
+        typography,
+        function({ addUtilities }) {
+            addUtilities({
+                '.line-through-thick': {
+                    textDecoration: 'line-through',
+                    'text-decoration-thickness': '5px', // Adjust thickness here
+                    'text-decoration-color': 'currentColor',
+                },
+            }, ['responsive', 'hover', 'focus'])
+        }
+    ],
 };
