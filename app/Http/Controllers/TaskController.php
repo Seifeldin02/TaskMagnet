@@ -194,7 +194,11 @@ public function share(Request $request, Task $task)
             if ($comment->image) {
                 File::delete(public_path($comment->image));
             }
+            $comment->delete();
         }
+    
+        // Delete comments made by shared users
+
     
         $task->delete();
 

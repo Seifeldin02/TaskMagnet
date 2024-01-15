@@ -71,4 +71,26 @@ class User extends Authenticatable
 {
     return $this->hasMany(Share::class);
 }
+protected static function boot()
+{
+    parent::boot();
+
+    static::deleting(function ($user) {
+        // Delete the user's tasks
+        $user->tasks()->each(function ($task) {
+            $task->delete();
+        });
+
+        // Delete the user's shares
+        $user->shares()->delete();
+
+        // Delete the user's comments
+        $user->comments()->each(function ($comment) {
+            if ($comment->image) {
+                Storage::delete(public_path($comment->image));
+            }
+            $comment->delete();
+        });
+    });
+}
 }

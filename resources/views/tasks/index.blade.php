@@ -10,13 +10,14 @@
         <div class="w-full mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg p-6">
                 <h3 class="text-lg font-semibold mb-4 text-white font-weight-bold">Your Tasks</h3>
+ 
+                @if(count($tasks) > 0)
                 <form action="{{ route('tasks.toggleAutoSort') }}" method="POST" class="mb-4">
     @csrf
     <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
         {{ session('autoSort', false) ? 'Turn Off Automatic Sorting' : 'Turn On Automatic Sorting' }}
     </button>
 </form>
-                @if(count($tasks) > 0)
                     <table class="table-auto w-full">
                         <thead>
                             <tr>
