@@ -5,6 +5,8 @@ use App\Http\Controllers\TaskController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ShareController;
 use App\Http\Controllers\SubtaskController;
+use Illuminate\Support\Facades\Artisan;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -56,6 +58,11 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/run-schedule', function() {
+    Artisan::call('schedule:run');
+    return 'OK';
+})->middleware('ip');
 
 Route::middleware([
     'auth:sanctum',

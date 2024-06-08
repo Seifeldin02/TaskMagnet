@@ -50,7 +50,9 @@ protected function schedule(Schedule $schedule)
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
     ];
-
+    protected $routeMiddleware = [
+        'ip' => \App\Http\Middleware\CheckIpMiddleware::class,
+    ];
     /**
      * The application's middleware aliases.
      *
